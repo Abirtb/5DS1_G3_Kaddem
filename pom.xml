@@ -50,8 +50,10 @@
     </dependencies>
 <!-- Deploy to Nexus -->
 <distributionManagement>
-         <url>http://192.168.108.222:8081/repository/maven-releases/</url>
-
+        <repository>
+                 <id>deploymentRepo</id>
+                 <url>http://http://192.168.1.38:8081/repository/maven-releases/</url>
+        </repository>
 </distributionManagement>
     <build>
         <plugins>
