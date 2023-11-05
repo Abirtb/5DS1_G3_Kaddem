@@ -10,24 +10,23 @@ services:
       - MYSQL_USER=root
       - MYSQL_PASSWORD=
       - MYSQL_DATABASE=kaddem
-      - MYSQL_ROOT_PASSWORD=root
     volumes:
       - dbvol:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3306:3307"
     restart: always
 
   spring-app:
     build:
       context: .
     container_name: spring-app
-    image: ala/devops:latest
+    image: ramybh/kaddem:latest
     ports:
       - "8089:8089"
     networks:
       - database-network
     depends_on:
-      - database
+      - database-app
     environment:
       - MYSQL_HOST=database-app
       - MYSQL_USERNAME=root
