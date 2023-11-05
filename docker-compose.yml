@@ -1,0 +1,43 @@
+version: '3.7'
+services:
+
+  database-app:
+    container_name: database-app
+    image: mysql:8.0
+    networks:
+      - database-network
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=
+      - MYSQL_DATABASE=kaddem
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - dbvol:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: always
+
+  spring-app:
+    build:
+      context: .
+    container_name: spring-app
+    image: ala/devops:latest
+    ports:
+      - "8089:8089"
+    networks:
+      - database-network
+    depends_on:
+      - database
+    environment:
+      - MYSQL_HOST=database-app
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=
+      - MYSQL_DATABASE=kaddem
+      - MYSQL_PORT=3306
+
+networks:
+  database-network:
+    name: database-network
+
+volumes:
+  dbvol:
