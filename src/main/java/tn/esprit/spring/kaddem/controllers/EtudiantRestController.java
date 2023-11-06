@@ -3,7 +3,6 @@ package tn.esprit.spring.kaddem.controllers;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tn.esprit.spring.kaddem.dto.EtudiantDTO;
 import tn.esprit.spring.kaddem.entities.Etudiant;
 import tn.esprit.spring.kaddem.services.IEtudiantService;
 
@@ -18,9 +17,9 @@ public class EtudiantRestController {
 	// http://localhost:8089/Kaddem/etudiant/retrieve-all-etudiants
 	@GetMapping("/retrieve-all-etudiants")
 	public List<Etudiant> getEtudiants() {
-		return etudiantService.retrieveAllEtudiants();
+		List<Etudiant> listEtudiants = etudiantService.retrieveAllEtudiants();
+		return listEtudiants;
 	}
-
 	// http://localhost:8089/Kaddem/etudiant/retrieve-etudiant/8
 	@GetMapping("/retrieve-etudiant/{etudiant-id}")
 	public Etudiant retrieveEtudiant(@PathVariable("etudiant-id") Integer etudiantId) {
@@ -29,27 +28,10 @@ public class EtudiantRestController {
 
 	// http://localhost:8089/Kaddem/etudiant/add-etudiant
 	@PostMapping("/add-etudiant")
-	public EtudiantDTO addEtudiant(@RequestBody EtudiantDTO etudiantDTO) {
-		// You can perform validation and business logic here before adding.
-
-		// If you need to create the entity (Etudiant), create an instance and set the values from EtudiantDTO.
-		Etudiant etudiant = new Etudiant();
-		etudiant.setNomE(etudiantDTO.getNomE());
-		etudiant.setPrenomE(etudiantDTO.getPrenomE());
-		etudiant.setOp(etudiantDTO.getOp());
-
-		// Call the service to add the entity if needed.
-		etudiantService.addEtudiant(etudiant);
-
-		// You can then convert the added entity to an EtudiantDTO and return it if necessary.
-		EtudiantDTO addedDTO = new EtudiantDTO();
-		addedDTO.setNomE(etudiant.getNomE());
-		addedDTO.setPrenomE(etudiant.getPrenomE());
-		addedDTO.setOp(etudiant.getOp());
-
-		return addedDTO;
+	public Etudiant addEtudiant(@RequestBody Etudiant e) {
+		Etudiant etudiant = etudiantService.addEtudiant(e);
+		return etudiant;
 	}
-
 
 	// http://localhost:8089/Kaddem/etudiant/remove-etudiant/1
 	@DeleteMapping("/remove-etudiant/{etudiant-id}")
@@ -59,22 +41,11 @@ public class EtudiantRestController {
 
 	// http://localhost:8089/Kaddem/etudiant/update-etudiant
 	@PutMapping("/update-etudiant")
-	public EtudiantDTO updateEtudiant(@RequestBody EtudiantDTO etudiantDTO) {
-		Etudiant etudiant = new Etudiant();
-		etudiant.setNomE(etudiantDTO.getNomE());
-		etudiant.setPrenomE(etudiantDTO.getPrenomE());
-		etudiant.setOp(etudiantDTO.getOp());
+	public Etudiant updateEtudiant(@RequestBody Etudiant e) {
+		Etudiant etudiant= etudiantService.updateEtudiant(e);
 
-		etudiant = etudiantService.updateEtudiant(etudiant);
-
-		EtudiantDTO updatedDTO = new EtudiantDTO();
-		updatedDTO.setNomE(etudiant.getNomE());
-		updatedDTO.setPrenomE(etudiant.getPrenomE());
-		updatedDTO.setOp(etudiant.getOp());
-
-		return updatedDTO;
+		return etudiant;
 	}
-
 
 	//@PutMapping("/affecter-etudiant-departement")
 	@PutMapping(value="/affecter-etudiant-departement/{etudiantId}/{departementId}")
@@ -83,27 +54,12 @@ public class EtudiantRestController {
     }
 //addAndAssignEtudiantToEquipeAndContract(Etudiant e, Integer idContrat, Integer idEquipe)
     /* Ajouter un étudiant tout en lui affectant un contrat et une équipe */
-@PostMapping("/add-assign-Etudiant/{idContrat}/{idEquipe}")
-@ResponseBody
-public EtudiantDTO addEtudiantWithEquipeAndContract(@RequestBody EtudiantDTO etudiantDTO, @PathVariable("idContrat") Integer idContrat, @PathVariable("idEquipe") Integer idEquipe) {
-	// Convert EtudiantDTO to Etudiant entity
-	Etudiant etudiant = new Etudiant();
-	etudiant.setNomE(etudiantDTO.getNomE());
-	etudiant.setPrenomE(etudiantDTO.getPrenomE());
-	etudiant.setOp(etudiantDTO.getOp());
-
-	// Call the service method to add and assign Etudiant to Equipe and Contrat
-	etudiant = etudiantService.addAndAssignEtudiantToEquipeAndContract(etudiant, idContrat, idEquipe);
-
-	// Convert the resulting Etudiant entity back to EtudiantDTO
-	EtudiantDTO updatedDTO = new EtudiantDTO();
-	updatedDTO.setNomE(etudiant.getNomE());
-	updatedDTO.setPrenomE(etudiant.getPrenomE());
-	updatedDTO.setOp(etudiant.getOp());
-
-	return updatedDTO;
-}
-
+    @PostMapping("/add-assign-Etudiant/{idContrat}/{idEquipe}")
+    @ResponseBody
+    public Etudiant addEtudiantWithEquipeAndContract(@RequestBody Etudiant e, @PathVariable("idContrat") Integer idContrat, @PathVariable("idEquipe") Integer idEquipe) {
+        Etudiant etudiant = etudiantService.addAndAssignEtudiantToEquipeAndContract(e,idContrat,idEquipe);
+        return etudiant;
+    }
 
 	@GetMapping(value = "/getEtudiantsByDepartement/{idDepartement}")
 	public List<Etudiant> getEtudiantsParDepartement(@PathVariable("idDepartement") Integer idDepartement) {

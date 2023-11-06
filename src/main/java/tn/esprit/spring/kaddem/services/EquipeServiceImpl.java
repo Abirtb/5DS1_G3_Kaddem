@@ -12,18 +12,17 @@ import tn.esprit.spring.kaddem.repositories.EquipeRepository;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
 @AllArgsConstructor
 @Service
-public abstract class EquipeServiceImpl implements IEquipeService {
+public class EquipeServiceImpl implements IEquipeService{
 	EquipeRepository equipeRepository;
 
 
 	public List<Equipe> retrieveAllEquipes(){
-		return  (List<Equipe>) equipeRepository.findAll();
+	return  (List<Equipe>) equipeRepository.findAll();
 	}
 	public Equipe addEquipe(Equipe e){
 		return (equipeRepository.save(e));
@@ -35,72 +34,49 @@ public abstract class EquipeServiceImpl implements IEquipeService {
 	}
 
 	public Equipe retrieveEquipe(Integer equipeId){
-		Optional<Equipe> e = equipeRepository.findById(equipeId);
-		if (e.isPresent()) {
-			return e.get();
-		}
-		else return null;
-
+		return equipeRepository.findById(equipeId).get();
 	}
 
 	public Equipe updateEquipe(Equipe e){
-		return (	equipeRepository.save(e));
+	return (	equipeRepository.save(e));
 	}
 
-	public void refactorMethod() {
+	public void evoluerEquipes(){
 		List<Equipe> equipes = (List<Equipe>) equipeRepository.findAll();
-
 		for (Equipe equipe : equipes) {
-			if (isJuniorOrSenior(equipe)) {
-				int activeContractCount = countActiveContracts(equipe);
-
-				if (activeContractCount >= 3) {
-					updateTeamLevel(equipe);
+			if ((equipe.getNiveau().equals(Niveau.JUNIOR)) || (equipe.getNiveau().equals(Niveau.SENIOR))) {
+				List<Etudiant> etudiants = (List<Etudiant>) equipe.getEtudiants();
+				Integer nbEtudiantsAvecContratsActifs=0;
+				for (Etudiant etudiant : etudiants) {
+					Set<Contrat> contrats = etudiant.getContrats();
+					//Set<Contrat> contratsActifs=null;
+					for (Contrat contrat : contrats) {
+						Date dateSysteme = new Date();
+						long difference_In_Time = dateSysteme.getTime() - contrat.getDateFinContrat().getTime();
+						long difference_In_Years = (difference_In_Time / (1000l * 60 * 60 * 24 * 365));
+						if ((contrat.getArchive() == false) && (difference_In_Years > 1)) {
+							//	contratsActifs.add(contrat);
+							nbEtudiantsAvecContratsActifs++;
+							break;
+						}
+						if (nbEtudiantsAvecContratsActifs >= 3) break;
+					}
+				}
+					if (nbEtudiantsAvecContratsActifs >= 3){
+						if (equipe.getNiveau().equals(Niveau.JUNIOR)){
+							equipe.setNiveau(Niveau.SENIOR);
+							equipeRepository.save(equipe);
+							break;
+						}
+						if (equipe.getNiveau().equals(Niveau.SENIOR)){
+							equipe.setNiveau(Niveau.EXPERT);
+							equipeRepository.save(equipe);
+							break;
+						}
 				}
 			}
-		}
-	}
 
-	private boolean isJuniorOrSenior(Equipe equipe) {
-		return equipe.getNiveau().equals(Niveau.JUNIOR) || equipe.getNiveau().equals(Niveau.SENIOR);
-	}
-
-	private int countActiveContracts(Equipe equipe) {
-		int activeContractCount = 0;
-
-		for (Etudiant etudiant : equipe.getEtudiants()) {
-			Set<Contrat> contrats = etudiant.getContrats();
-
-			for (Contrat contrat : contrats) {
-				if (isActiveContract(contrat)) {
-					activeContractCount++;
-					break;
-				}
-			}
-
-			if (activeContractCount >= 3) {
-				break;
-			}
 		}
 
-		return activeContractCount;
 	}
-
-	private boolean isActiveContract(Contrat contrat) {
-		Date dateSysteme = new Date();
-		long differenceInTime = dateSysteme.getTime() - contrat.getDateFinContrat().getTime();
-		long differenceInYears = (differenceInTime / (1000l * 60 * 60 * 24 * 365));
-		return !contrat.getArchive() && differenceInYears > 1;
-	}
-
-	private void updateTeamLevel(Equipe equipe) {
-		if (equipe.getNiveau().equals(Niveau.JUNIOR)) {
-			equipe.setNiveau(Niveau.SENIOR);
-		} else if (equipe.getNiveau().equals(Niveau.SENIOR)) {
-			equipe.setNiveau(Niveau.EXPERT);
-		}
-
-		equipeRepository.save(equipe);
-	}
-
 }

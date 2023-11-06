@@ -22,7 +22,7 @@ public class Etudiant implements Serializable{
     private Option op;
     @OneToMany(mappedBy="etudiant", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Contrat> contrats;
+    private Set<Contrat> Contrats;
     @ManyToOne
     @JsonIgnore
     private Departement departement;
@@ -30,9 +30,10 @@ public class Etudiant implements Serializable{
     @ManyToMany(mappedBy="etudiants")
 
     @JsonIgnore
+  //  private Set<Equipe> equipes ;
     private List<Equipe> equipes ;
     public Etudiant() {
-        // Empty default constructor
+        // TODO Auto-generated constructor stub
     }
 
     public Etudiant(String nomE, String prenomE) {
@@ -56,13 +57,12 @@ public class Etudiant implements Serializable{
     }
 
     public Set<Contrat> getContrats() {
-        return contrats;
+        return Contrats;
     }
 
     public void setContrats(Set<Contrat> contrats) {
-        this.contrats = contrats;
+        Contrats = contrats;
     }
-
 
     public Departement getDepartement() {
         return departement;

@@ -19,7 +19,7 @@ public interface IUniversiteService {
 
     public void assignUniversiteToDepartement(Integer idUniversite, Integer idDepartement);
 
-  List<Departement> retrieveDepartementsByUniversite(Integer idUniversite);
+    public Set<Departement> retrieveDepartementsByUniversite(Integer idUniversite);
 
 
 }

@@ -17,7 +17,7 @@ public class Universite implements Serializable{
     @JsonIgnore
     private Set<Departement> departements;
     public Universite() {
-        // Default constructor with no specific task.
+        // TODO Auto-generated constructor stub
     }
 
     public Universite(String nomUniv) {
@@ -39,16 +39,16 @@ public class Universite implements Serializable{
         this.departements = departements;
     }
 
-    public Integer getId() {
+    public Integer getIdUniv() {
         return idUniv;
     }
-    public void setId(Integer idUniv) {
+    public void setIdUniv(Integer idUniv) {
         this.idUniv = idUniv;
     }
-    public String getNom() {
+    public String getNomUniv() {
         return nomUniv;
     }
-    public void setNom(String nomUniv) {
+    public void setNomUniv(String nomUniv) {
         this.nomUniv = nomUniv;
     }
 
