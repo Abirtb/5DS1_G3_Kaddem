@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.spring.kaddem.dto.EquipeDTO;
 import tn.esprit.spring.kaddem.entities.Equipe;
+import tn.esprit.spring.kaddem.dto.EquipeDTO;
 import tn.esprit.spring.kaddem.services.IEquipeService;
 
 import java.util.List;
@@ -17,8 +19,7 @@ public class EquipeRestController {
 	// http://localhost:8089/Kaddem/equipe/retrieve-all-equipes
 	@GetMapping("/retrieve-all-equipes")
 	public List<Equipe> getEquipes() {
-		List<Equipe> listEquipes = equipeService.retrieveAllEquipes();
-		return listEquipes;
+		return equipeService.retrieveAllEquipes();
 	}
 	// http://localhost:8089/Kaddem/equipe/retrieve-equipe/8
 	@GetMapping("/retrieve-equipe/{equipe-id}")
@@ -28,9 +29,12 @@ public class EquipeRestController {
 
 	// http://localhost:8089/Kaddem/equipe/add-equipe
 	@PostMapping("/add-equipe")
-	public Equipe addEquipe(@RequestBody Equipe e) {
-		Equipe equipe = equipeService.addEquipe(e);
-		return equipe;
+	public Equipe addEquipe(@RequestBody EquipeDTO edto) {
+		Equipe e =new Equipe();
+		e.setIdEquipe(edto.getIdEquipe());
+		e.setNomEquipe(edto.getNomEquipe());
+		equipeService.addEquipe(e);
+		return e;
 	}
 
 	// http://localhost:8089/Kaddem/equipe/remove-equipe/1
@@ -41,16 +45,18 @@ public class EquipeRestController {
 
 	// http://localhost:8089/Kaddem/equipe/update-equipe
 	@PutMapping("/update-equipe")
-	public Equipe updateEtudiant(@RequestBody Equipe e) {
-		Equipe equipe= equipeService.updateEquipe(e);
-		return equipe;
+	public Equipe updateEtudiant(@RequestBody EquipeDTO edto) {
+		Equipe e =new Equipe();
+		e.setIdEquipe(edto.getIdEquipe());
+		e.setNomEquipe(edto.getNomEquipe());
+		equipeService.updateEquipe(e);
+		return e;
 	}
 
 	@Scheduled(cron="0 0 13 * * *")
 	@PutMapping("/faireEvoluerEquipes")
 	public void faireEvoluerEquipes() {
-		equipeService.evoluerEquipes() ;
+		equipeService.refactorMethod() ;
 	}
 }
-
 

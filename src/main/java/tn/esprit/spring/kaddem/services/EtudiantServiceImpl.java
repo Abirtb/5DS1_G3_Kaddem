@@ -16,6 +16,7 @@ import tn.esprit.spring.kaddem.repositories.EtudiantRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -41,31 +42,53 @@ public class EtudiantServiceImpl implements IEtudiantService{
 		return etudiantRepository.save(e);
 	}
 
-	public Etudiant retrieveEtudiant(Integer  idEtudiant){
-		return etudiantRepository.findById(idEtudiant).get();
+	public Etudiant retrieveEtudiant(Integer idEtudiant) {
+		Optional<Etudiant> etudiantOptional = etudiantRepository.findById(idEtudiant);
+		if (etudiantOptional.isPresent()) {
+			return etudiantOptional.get();
+		} else {
+			// Handle the case where the Etudiant with the given id is not found (e.g., return null or throw an exception)
+			return null; // Example: You can choose to return null
+		}
 	}
+
 
 	public void removeEtudiant(Integer idEtudiant){
 	Etudiant e=retrieveEtudiant(idEtudiant);
 	etudiantRepository.delete(e);
 	}
 
-	public void assignEtudiantToDepartement (Integer etudiantId, Integer departementId){
-        Etudiant etudiant = etudiantRepository.findById(etudiantId).orElse(null);
-        Departement departement = departementRepository.findById(departementId).orElse(null);
-        etudiant.setDepartement(departement);
-        etudiantRepository.save(etudiant);
-	}
-	@Transactional
-	public Etudiant addAndAssignEtudiantToEquipeAndContract(Etudiant e, Integer idContrat, Integer idEquipe){
-		Contrat c=contratRepository.findById(idContrat).orElse(null);
-		Equipe eq=equipeRepository.findById(idEquipe).orElse(null);
-		c.setEtudiant(e);
-		eq.getEtudiants().add(e);
-return e;
+	public void assignEtudiantToDepartement(Integer etudiantId, Integer departementId) {
+		Etudiant etudiant = etudiantRepository.findById(etudiantId).orElse(null);
+		Departement departement = departementRepository.findById(departementId).orElse(null);
+
+		if (etudiant != null && departement != null) {
+			etudiant.setDepartement(departement);
+			etudiantRepository.save(etudiant);
+		} else {
+			// Handle the case where either etudiant or departement is not found (e.g., log an error or throw an exception)
+			// Example: You can log an error message or throw an exception
+		}
 	}
 
+	@Transactional
+	public Etudiant addAndAssignEtudiantToEquipeAndContract(Etudiant e, Integer idContrat, Integer idEquipe) {
+		Contrat c = contratRepository.findById(idContrat).orElse(null);
+		Equipe eq = equipeRepository.findById(idEquipe).orElse(null);
+
+		if (c != null && eq != null) {
+			c.setEtudiant(e);
+			eq.getEtudiants().add(e);
+			return e;
+		} else {
+			// Handle the case where either c or eq is not found (e.g., log an error or throw an exception)
+			// Example: You can log an error message or throw an exception
+			return null; // You might consider returning null or some other value indicating failure
+		}
+	}
+
+
 	public 	List<Etudiant> getEtudiantsByDepartement (Integer idDepartement){
-return  etudiantRepository.findEtudiantsByDepartement_IdDepart((idDepartement));
+return  etudiantRepository.findEtudiantsByDepartementIdDepart((idDepartement));
 	}
 }
