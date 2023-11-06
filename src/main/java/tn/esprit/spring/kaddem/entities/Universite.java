@@ -39,16 +39,16 @@ public class Universite implements Serializable{
         this.departements = departements;
     }
 
-    public Integer getIdUniv() {
+    public Integer getId() {
         return idUniv;
     }
-    public void setIdUniv(Integer idUniv) {
+    public void setId(Integer idUniv) {
         this.idUniv = idUniv;
     }
-    public String getNomUniv() {
+    public String getNom() {
         return nomUniv;
     }
-    public void setNomUniv(String nomUniv) {
+    public void setNom(String nomUniv) {
         this.nomUniv = nomUniv;
     }
 

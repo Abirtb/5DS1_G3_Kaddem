@@ -1,175 +1,105 @@
-/*package tn.esprit.spring;
-
-import lombok.extern.slf4j.Slf4j;
+package tn.esprit.spring;
 
 
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-        import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.boot.test.context.SpringBootTest;
-        import tn.esprit.spring.kaddem.entities.Departement;
-        import tn.esprit.spring.kaddem.entities.Universite;
-        import tn.esprit.spring.kaddem.services.IUniversiteService;
-
-        import java.util.List;
-        import java.util.Set;
-
-        import static org.junit.jupiter.api.Assertions.*;
+import tn.esprit.spring.kaddem.entities.Departement;
+import tn.esprit.spring.kaddem.entities.Universite;
+import tn.esprit.spring.kaddem.repositories.DepartementRepository;
+import tn.esprit.spring.kaddem.repositories.UniversiteRepository;
+import tn.esprit.spring.kaddem.services.IUniversiteService;
 
 @SpringBootTest
-@Slf4j
-public class UniversiteServiceImplTest {
+@Transactional
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class UniversiteServiceImpTest {
 
-   // private static final Logger log = LoggerFactory.getLogger(UniversiteServiceImplTest.class);
-
-    @Autowired
     private IUniversiteService universiteService;
 
-    @BeforeEach
-    public void setUp() {
-        // You can perform any setup or initialization here.
-    }
+
+    private UniversiteRepository universiteRepository;
+
+
+    private DepartementRepository departementRepository;
 
     @Test
+    @Order(1)
     public void testRetrieveAllUniversites() {
         List<Universite> universites = universiteService.retrieveAllUniversites();
         assertNotNull(universites);
+        assertEquals(0, universites.size());
     }
 
     @Test
-    public void testAddUniversite() throws ParseException{
-        // Create a sample Universite object
+    @Order(2)
+    public void testAddUniversite() {
         Universite universite = new Universite();
-        universite.setName("Sample Universite Name");
-        universite.setLocation("Sample Location");
-
-        // Add the Universite using the service
-        Universite addedUniversite = universiteService.addUniversite(universite);
-
-        // Assert that the addedUniversite is not null
-        assertNotNull(addedUniversite);
-
-        // Assert that the ID of the addedUniversite is not null
-        assertNotNull(addedUniversite.getId());
-
-        // You can also log information for debugging or tracking
-        log.info("Added Universite: " + addedUniversite);
-
-        // Clean up: Delete the added Universite
-        universiteService.deleteUniversite(addedUniversite.getId());
+        universite.setNom("Test Universite");
+        Universite savedUniversite = universiteService.addUniversite(universite);
+        assertNotNull(savedUniversite.getId());
     }
 
     @Test
+    @Order(3)
     public void testUpdateUniversite() {
-        // Create a sample Universite object
-        Universite universite = new Universite();
-        universite.setName("Sample Universite Name");
-        universite.setLocation("Sample Location");
-
-        // Add the Universite using the service
-        Universite addedUniversite = universiteService.addUniversite(universite);
-
-        // Modify the added Universite
-        addedUniversite.setName("Updated Universite Name");
-        Universite updatedUniversite = universiteService.updateUniversite(addedUniversite);
-
-        // Assert that the updatedUniversite is not null
-        assertNotNull(updatedUniversite);
-
-        // You can add more assertions as needed
-        assertEquals("Updated Universite Name", updatedUniversite.getName());
-
-        // Clean up: Delete the added Universite
-        universiteService.deleteUniversite(updatedUniversite.getId());
+        Universite universite = universiteService.retrieveAllUniversites().get(0);
+        universite.setNom("Updated Universite");
+        Universite updatedUniversite = universiteService.updateUniversite(universite);
+        assertEquals(universite.getId(), updatedUniversite.getId());
     }
 
     @Test
+    @Order(4)
     public void testRetrieveUniversite() {
-        // Create a sample Universite object
-        Universite universite = new Universite();
-        universite.setName("Sample Universite Name");
-        universite.setLocation("Sample Location");
-
-        // Add the Universite using the service
-        Universite addedUniversite = universiteService.addUniversite(universite);
-
-        // Retrieve the added Universite by ID
-        Universite retrievedUniversite = universiteService.retrieveUniversite(addedUniversite.getId());
-
-        // Assert that the retrievedUniversite is not null
+        Universite universite = universiteService.retrieveAllUniversites().get(0);
+        Universite retrievedUniversite = universiteService.retrieveUniversite(universite.getId());
         assertNotNull(retrievedUniversite);
-
-        // Clean up: Delete the added Universite
-        universiteService.deleteUniversite(retrievedUniversite.getId());
+        assertEquals(universite.getId(), retrievedUniversite.getId());
     }
 
     @Test
+    @Order(5)
     public void testDeleteUniversite() {
-        // Create a sample Universite object
-        Universite universite = new Universite();
-        universite.setName("Sample Universite Name");
-        universite.setLocation("Sample Location");
-
-        // Add the Universite using the service
-        Universite addedUniversite = universiteService.addUniversite(universite);
-
-        // Delete the added Universite
-        universiteService.deleteUniversite(addedUniversite.getId());
-
-        // Attempt to retrieve the deleted Universite
-        Universite deletedUniversite = universiteService.retrieveUniversite(addedUniversite.getId());
-
-        // Assert that the deletedUniversite is null
-        assertNull(deletedUniversite);
+        List<Universite> universites = universiteService.retrieveAllUniversites();
+        if (!universites.isEmpty()) {
+            Universite universite = universites.get(0);
+            universiteService.deleteUniversite(universite.getId());
+            List<Universite> updatedUniversites = universiteService.retrieveAllUniversites();
+            assertTrue(updatedUniversites.size() < universites.size());
+        }
     }
 
     @Test
+    @Order(6)
     public void testAssignUniversiteToDepartement() {
-        // Create a sample Universite and Departement
-        Universite universite = new Universite();
-        universite.setName("Sample Universite Name");
-        universite.setLocation("Sample Location");
-
+        Universite universite = universiteService.retrieveAllUniversites().get(0);
         Departement departement = new Departement();
-        departement.setName("Sample Departement Name");
-
-        // Add the Universite and Departement using the service
-        Universite addedUniversite = universiteService.addUniversite(universite);
-        Departement addedDepartement = departementService.addDepartement(departement);
-
-        // Assign the Departement to the Universite
-        universiteService.assignUniversiteToDepartement(addedUniversite.getId(), addedDepartement.getId());
-
-        // Retrieve the Universite's Departements and check if the addedDepartement is present
-        Set<Departement> universiteDepartements = universiteService.retrieveDepartementsByUniversite(addedUniversite.getId());
-
-        assertNotNull(universiteDepartements);
-        assertTrue(universiteDepartements.contains(addedDepartement));
-
-        // Clean up: Delete the added Universite and Departement
-        universiteService.deleteUniversite(addedUniversite.getId());
-        departementService.deleteDepartement(addedDepartement.getId());
+        departement.setNomDepart("Test Departement");
+        Departement savedDepartement = departementRepository.save(departement);
+        universiteService.assignUniversiteToDepartement(universite.getId(), savedDepartement.getIdDepart());
+        Universite updatedUniversite = universiteService.retrieveUniversite(universite.getId());
+        assertTrue(updatedUniversite.getDepartements().contains(savedDepartement));
     }
 
     @Test
+    @Order(7)
     public void testRetrieveDepartementsByUniversite() {
-        // Create a sample Universite and add it
-        Universite universite = new Universite();
-        universite.setName("Sample Universite Name");
-        universite.setLocation("Sample Location");
-
-        Universite addedUniversite = universiteService.addUniversite(universite);
-
-        // Retrieve the Universite's Departements and ensure it's not null
-        Set<Departement> universiteDepartements = universiteService.retrieveDepartementsByUniversite(addedUniversite.getId());
-        assertNotNull(universiteDepartements);
-
-        // Clean up: Delete the added Universite
-        universiteService.deleteUniversite(addedUniversite.getId());
+        Universite universite = universiteService.retrieveAllUniversites().get(0);
+        List<Departement> departements = universiteService.retrieveDepartementsByUniversite(universite.getId());
+        assertNotNull(departements);
     }
-
-    // You can write more test methods for other service methods in a similar manner.
-
 }
 
-*/

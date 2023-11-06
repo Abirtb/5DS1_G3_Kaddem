@@ -7,10 +7,7 @@ import tn.esprit.spring.kaddem.entities.Universite;
 import tn.esprit.spring.kaddem.repositories.DepartementRepository;
 import tn.esprit.spring.kaddem.repositories.UniversiteRepository;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UniversiteServiceImpl implements IUniversiteService {
@@ -65,14 +62,15 @@ public class UniversiteServiceImpl implements IUniversiteService {
 
     }
 
-    public Set<Departement> retrieveDepartementsByUniversite(Integer idUniversite) {
+    public List<Departement> retrieveDepartementsByUniversite(Integer idUniversite) {
         Universite u = universiteRepository.findById(idUniversite).orElse(null);
         if (u != null) {
-            return u.getDepartements();
+            return new ArrayList<>(u.getDepartements());
         } else {
-            // Return an empty set instead of null
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
     }
+
+
 
 }

@@ -35,11 +35,11 @@ public class UniversiteRestController {
 	@PostMapping("/add-universite")
 	public UniversiteDTO addUniversite(@RequestBody UniversiteDTO universiteDTO) {
 		Universite universite = new Universite();
-		universite.setNomUniv(universiteDTO.getNomUniv());
+		universite.setNom(universiteDTO.getNomUniv());
 		Universite savedUniversite = universiteService.addUniversite(universite);
 
 		UniversiteDTO responseDTO = new UniversiteDTO();
-		responseDTO.setNomUniv(savedUniversite.getNomUniv());
+		responseDTO.setNomUniv(savedUniversite.getNom());
 
 		return responseDTO;
 	}
@@ -55,11 +55,11 @@ public class UniversiteRestController {
 	@PutMapping("/update-universite")
 	public UniversiteDTO updateUniversite(@RequestBody UniversiteDTO universiteDTO) {
 		Universite universite = new Universite();
-		universite.setNomUniv(universiteDTO.getNomUniv());
+		universite.setNom(universiteDTO.getNomUniv());
 		Universite updatedUniversite = universiteService.updateUniversite(universite);
 
 		UniversiteDTO responseDTO = new UniversiteDTO();
-		responseDTO.setNomUniv(updatedUniversite.getNomUniv());
+		responseDTO.setNomUniv(updatedUniversite.getNom());
 
 		return responseDTO;
 	}
@@ -72,10 +72,11 @@ public class UniversiteRestController {
 	}
 
 	@GetMapping(value = "/listerDepartementsUniversite/{idUniversite}")
-	public Set<Departement> listerDepartementsUniversite(@PathVariable("idUniversite") Integer idUniversite) {
-
+	public List<Departement> listerDepartementsUniversite(@PathVariable("idUniversite") Integer idUniversite) {
 		return universiteService.retrieveDepartementsByUniversite(idUniversite);
 	}
+
+
 
 }
 

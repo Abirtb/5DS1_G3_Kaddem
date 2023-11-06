@@ -88,7 +88,7 @@ ContratRepository contratRepository;
 					contrat.setArchive(true);
 					contratRepository.save(contrat);
 				}
-			
+
 		}
 	}
 
