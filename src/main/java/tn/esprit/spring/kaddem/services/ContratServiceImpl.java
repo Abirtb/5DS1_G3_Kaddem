@@ -74,7 +74,7 @@ ContratRepository contratRepository;
 
 		for (Contrat contrat : contrats) {
 			Date dateSysteme = new Date();
-			if (!contrat.getArchive()) {
+
 				long timeDifferenceInMilliseconds = dateSysteme.getTime() - contrat.getDateFinContrat().getTime();
 				long differenceInDays = (timeDifferenceInMilliseconds / (1000 * 60 * 60 * 24)) % 365;
 
@@ -88,7 +88,7 @@ ContratRepository contratRepository;
 					contrat.setArchive(true);
 					contratRepository.save(contrat);
 				}
-			}
+			
 		}
 	}
 
