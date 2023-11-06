@@ -1,12 +1,11 @@
 package tn.esprit.spring.kaddem.controllers;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.spring.kaddem.dto.ContratDTO;
 import tn.esprit.spring.kaddem.entities.Contrat;
-import tn.esprit.spring.kaddem.services.ContratServiceImpl;
 import tn.esprit.spring.kaddem.services.IContratService;
 
 import java.util.Date;
@@ -20,9 +19,9 @@ public class ContratRestController {
 	// http://localhost:8089/Kaddem/contrat/retrieve-all-contrats
 	@GetMapping("/retrieve-all-contrats")
 	public List<Contrat> getContrats() {
-		List<Contrat> listContrats = contratService.retrieveAllContrats();
-		return listContrats;
+		return contratService.retrieveAllContrats();
 	}
+
 	// http://localhost:8089/Kaddem/contrat/retrieve-contrat/8
 	@GetMapping("/retrieve-contrat/{contrat-id}")
 	public Contrat retrieveContrat(@PathVariable("contrat-id") Integer contratId) {
@@ -30,29 +29,57 @@ public class ContratRestController {
 	}
 
 	// http://localhost:8089/Kaddem/econtrat/add-contrat
-	@PostMapping("/add-contrat")
-	public Contrat addContrat(@RequestBody Contrat c) {
-		Contrat contrat = contratService.addContrat(c);
-		return contrat;
-	}
+    @PostMapping("/add-contrat")
+    public ContratDTO addContrat(@RequestBody ContratDTO contratDTO) {
+        // Create a new ContratDTO instance and populate it with the data received in the request
 
-	// http://localhost:8089/Kaddem/contrat/remove-contrat/1
+        // You can convert ContratDTO to the original entity (Contrat) if needed
+        Contrat contrat = new Contrat();
+        contrat.setDateDebutContrat(contratDTO.getDateDebutContrat());
+        contrat.setDateFinContrat(contratDTO.getDateFinContrat());
+        contrat.setSpecialite(contratDTO.getSpecialite());
+        contrat.setArchive(contratDTO.getArchive());
+        contrat.setMontantContrat(contratDTO.getMontantContrat());
+
+        // Call the service to save the entity if needed
+
+        // You can return the same DTO or a response as needed
+        return contratDTO;
+    }
+
+
+    // http://localhost:8089/Kaddem/contrat/remove-contrat/1
 	@DeleteMapping("/remove-contrat/{contrat-id}")
 	public void removeContrat(@PathVariable("contrat-id") Integer contratId) {
 		contratService.removeContrat(contratId);
 	}
 
 	// http://localhost:8089/Kaddem/contrat/update-contrat
-	@PutMapping("/update-contrat")
-	public Contrat updateContrat(@RequestBody Contrat c) {
-		Contrat contrat= contratService.updateContrat(c);
-		return contrat;
+	public ContratDTO updateContrat(@RequestBody ContratDTO contratDTO) {
+		// You can perform validation and business logic here before updating
+
+		// If you need to update the entity (Contrat), create an instance and set the values from ContratDTO
+		Contrat contrat = new Contrat();
+		contrat.setDateDebutContrat(contratDTO.getDateDebutContrat());
+		contrat.setDateFinContrat(contratDTO.getDateFinContrat());
+		contrat.setSpecialite(contratDTO.getSpecialite());
+		contrat.setArchive(contratDTO.getArchive());
+		contrat.setMontantContrat(contratDTO.getMontantContrat());
+
+		// Call the service to update the entity if needed
+
+		// You can then convert the updated entity back to a DTO and return it if necessary
+		ContratDTO updatedDTO = new ContratDTO();
+		updatedDTO.setDateDebutContrat(contrat.getDateDebutContrat());
+		updatedDTO.setDateFinContrat(contrat.getDateFinContrat());
+		updatedDTO.setSpecialite(contrat.getSpecialite());
+		updatedDTO.setArchive(contrat.getArchive());
+		updatedDTO.setMontantContrat(contrat.getMontantContrat());
+
+		return updatedDTO;
 	}
 
-		/*@PutMapping(value = "/assignContratToEtudiant/{ce}/{nomE}/{prenomE}")
-		public Contrat assignContratToEtudiant (Contrat ce, String nomE, String prenomE){
-		return 	(contratService.affectContratToEtudiant(ce, nomE, prenomE));
-		}*/
+
 
 	@PutMapping(value = "/assignContratToEtudiant/{idContrat}/{nomE}/{prenomE}")
 	public Contrat assignContratToEtudiant (Integer idContrat, String nomE, String prenomE){
@@ -72,7 +99,7 @@ public class ContratRestController {
     @Scheduled(cron="0 0 13 * * *")//(cron="0 0 13 * * ?")(fixedRate =21600)
 	@PutMapping(value = "/majStatusContrat")
 	public void majStatusContrat (){
-		//return 	(contratService.affectContratToEtudiant(ce, nomE, prenomE));
+
 		contratService.retrieveAndUpdateStatusContrat();
 
 	}
