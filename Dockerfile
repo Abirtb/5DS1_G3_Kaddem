@@ -4,3 +4,4 @@ ADD target/kaddem.jar kaddem.jar
 ENTRYPOINT ["java","-jar","/kaddem.jar"]
 
 
+
